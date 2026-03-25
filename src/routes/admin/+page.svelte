@@ -30,7 +30,10 @@
 		MessageSquarePlus,
 		Timer,
 		Info,
-		Zap
+		Zap,
+		Cpu,
+		Github,
+		Heart
 	} from 'lucide-svelte';
 	import { fade, slide } from 'svelte/transition';
 	import { onMount } from 'svelte';
@@ -67,14 +70,15 @@
 		window.location.href = '/';
 	}
 
-	let activeTab = $state<'umum' | 'kas' | 'jadwal' | 'teks' | 'bg'>('umum');
+	let activeTab = $state<'umum' | 'kas' | 'jadwal' | 'teks' | 'bg' | 'about'>('umum');
 
 	const tabs = [
 		{ id: 'umum', label: 'Umum', icon: SettingsIcon },
 		{ id: 'kas', label: 'Kas', icon: Wallet },
 		{ id: 'jadwal', label: 'Jadwal', icon: Clock },
 		{ id: 'teks', label: 'Info', icon: Type },
-		{ id: 'bg', label: 'BG', icon: ImageIcon }
+		{ id: 'bg', label: 'BG', icon: ImageIcon },
+		{ id: 'about', label: 'About', icon: Cpu }
 	] as const;
 
 	// Mapping Label Bahasa Indonesia
@@ -435,6 +439,40 @@
 							</label>
 						</div>
 						<div class="mb-6 space-y-4 rounded-2xl border border-slate-800/50 bg-slate-950 p-5 text-center"><input bind:value={txDesc} placeholder="Keterangan..." class="w-full rounded-xl border border-slate-800 bg-slate-900 p-3 text-sm outline-none" /><div class="grid grid-cols-2 gap-3"><input bind:value={txAmountInput} oninput={handleAmountInput} placeholder="Jumlah" class="w-full rounded-xl border border-slate-800 bg-slate-900 p-3 font-mono font-bold" /><select bind:value={txType} class="w-full rounded-xl border border-slate-800 bg-slate-900 p-3 text-xs font-bold"><option value="in">MASUK (+)</option><option value="out">KELUAR (-)</option></select></div><button onclick={addTransaction} class="w-full rounded-xl bg-emerald-600 p-4 text-xs font-black text-white uppercase">CATAT TRANSAKSI</button></div><div class="mb-4 flex items-end justify-between px-2"><p class="text-[10px] font-black text-slate-500 uppercase">Total Saldo</p><p class="text-2xl font-black text-emerald-400 tabular-nums">{formatRupiah(settings.value.cash)}</p></div><div class="divide-y divide-slate-800 overflow-hidden rounded-2xl border border-slate-800/50 bg-slate-950">{#each settings.value.transactions as tx (tx.id)}<div class="flex items-center justify-between p-4 hover:bg-slate-800/30"><div class="min-w-0 flex-1 pr-2"><p class="truncate text-sm font-bold">{tx.desc}</p><p class="text-[9px] font-black text-slate-500 uppercase">{tx.date}</p></div><div class="flex items-center gap-4"><p class="font-mono text-sm font-black {tx.type === 'in' ? 'text-emerald-400' : 'text-rose-400'}">{tx.type === 'in' ? '+' : '-'} {formatRupiah(tx.amount)}</p><button onclick={() => removeTransaction(tx.id)} class="text-rose-500 p-2"><Trash2 class="h-4 w-4" /></button></div></div>{/each}</div></section>
+				</div>
+			{/if}
+
+			{#if activeTab === 'about'}
+				<div transition:fade={{ duration: 200 }} class="space-y-6">
+					<section class="rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-xl text-center">
+						<div class="mb-6 inline-block rounded-full bg-blue-500/10 p-6">
+							<Cpu class="h-12 w-12 text-blue-400" />
+						</div>
+						<h2 class="text-2xl font-black tracking-tighter text-white uppercase">YADM v1.0.0</h2>
+						<p class="mt-2 text-xs font-bold uppercase tracking-[0.3em] text-slate-500">Yet Another Display Mosque</p>
+						
+						<div class="my-8 h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent"></div>
+						
+						<div class="space-y-4 text-sm text-slate-400">
+							<p>Sistem informasi display masjid berbasis web yang ringan, modern, dan mudah dikustomisasi.</p>
+							<div class="flex flex-wrap justify-center gap-2 pt-4">
+								<span class="rounded-full border border-slate-800 bg-slate-950 px-4 py-1 text-[10px] font-bold">Svelte 5</span>
+								<span class="rounded-full border border-slate-800 bg-slate-950 px-4 py-1 text-[10px] font-bold">TailwindCSS</span>
+								<span class="rounded-full border border-slate-800 bg-slate-950 px-4 py-1 text-[10px] font-bold">Vite</span>
+							</div>
+						</div>
+
+						<div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+							<a href="https://github.com/nyanpoketto-kujira/Yet-Another-Display-Mosque" target="_blank" class="flex items-center justify-center gap-3 rounded-2xl border border-slate-800 bg-slate-950 p-4 transition-all hover:bg-slate-800">
+								<Github class="h-5 w-5 text-white" />
+								<span class="text-xs font-black uppercase tracking-widest">Source Code</span>
+							</a>
+							<div class="flex items-center justify-center gap-3 rounded-2xl border border-slate-800 bg-slate-950 p-4">
+								<Heart class="h-5 w-5 text-rose-500 fill-rose-500" />
+								<span class="text-xs font-black uppercase tracking-widest text-slate-300">nyanpoketto-kujira</span>
+							</div>
+						</div>
+					</section>
 				</div>
 			{/if}
 		</main>
