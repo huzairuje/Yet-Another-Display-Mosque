@@ -35,7 +35,7 @@
 	<div class="mb-6 flex items-center justify-between">
 		<div class="flex items-center gap-2">
 			<Zap class="h-5 w-5 fill-yellow-400 text-yellow-400" />
-			<h2 class="text-sm font-black tracking-tighter uppercase">Vibe Debugger</h2>
+			<h2 class="text-sm font-black tracking-tighter uppercase">YADM Debugger</h2>
 		</div>
 		<button onclick={onClose} class="rounded-full p-2 transition-colors hover:bg-white/10">
 			<X class="h-4 w-4" />

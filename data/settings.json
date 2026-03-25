@@ -14,13 +14,34 @@
     "dhuhr": 10,
     "asr": 10,
     "maghrib": 10,
-    "isha": 1
+    "isha": 10
   },
   "drift": 0,
   "cash": -22541241,
   "runningText": "YADM (Yet Another Display Mosque) - Selamat datang jamaah sekalian. Mari rapatkan shaf.",
   "bigInfo": "",
   "infos": [
+    {
+      "id": "13u13ec",
+      "header": "tes",
+      "content": "YADM (Yet Another Display Mosque) - Selamat datang jamaah sekalian. Mari rapatkan shaf. YADM (Yet Another Display Mosque) - Selamat datang jamaah sekalian. Mari rapatkan shaf.",
+      "footer": "civo",
+      "active": true
+    },
+    {
+      "id": "kl3eytt",
+      "header": "tes",
+      "content": "12345678990qwerttyuiopasdfghjklzxcvbnm",
+      "footer": "civo",
+      "active": false
+    },
+    {
+      "id": "x51a7pr",
+      "header": "tes",
+      "content": "lorem ipsum... wait... ngapain gua manual?",
+      "footer": "civo",
+      "active": false
+    },
     {
       "id": "7sioyvj",
       "header": "tes",
@@ -33,13 +54,13 @@
       "header": "Hadits Hari Ini",
       "content": "Barangsiapa yang menempuh jalan untuk mencari ilmu, maka Allah akan memudahkan baginya jalan menuju surga.",
       "footer": "HR. Muslim",
-      "active": true
+      "active": false
     }
   ],
-  "preAdzanDuration": 10,
+  "preAdzanDuration": 1,
   "sholatDuration": 15,
-  "bgSlideshowDuration": 10,
-  "infoSlideshowDuration": 15,
+  "bgSlideshowDuration": 15,
+  "infoSlideshowDuration": 5,
   "transactions": [
     {
       "id": "ps3jkss31pmn6a3gz7",
@@ -66,10 +87,11 @@
   "adminPassword": "vibe-masjid",
   "backgrounds": [
     "/uploads/1774360995771-462476427.jpg",
-    "/uploads/1774443073083-38049534.jpg"
+    "/uploads/1774443073083-38049534.jpg",
+    "/uploads/1774466098438-432780596.jpg"
   ],
   "fridayKhatib": "Ustadz Ahmad Fulan",
   "fridayKhutbahDuration": 20,
   "hideTransactionAmount": false,
-  "theme": "modern"
+  "theme": "sunset"
 }

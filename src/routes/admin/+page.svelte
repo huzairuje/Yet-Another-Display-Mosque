@@ -36,7 +36,7 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 
-	let isAuthenticated = $state(browser && sessionStorage.getItem('admin-vibe-auth') === 'true');
+	let isAuthenticated = $state(browser && sessionStorage.getItem('admin-yadm-auth') === 'true');
 	let passwordInput = $state('');
 	let loginError = $state(false);
 	let showPass = $state(false);
@@ -49,7 +49,7 @@
 		if (passwordInput === settings.value.adminPassword) {
 			isAuthenticated = true;
 			loginError = false;
-			if (browser) sessionStorage.setItem('admin-vibe-auth', 'true');
+			if (browser) sessionStorage.setItem('admin-yadm-auth', 'true');
 		} else {
 			loginError = true;
 			passwordInput = '';
@@ -59,7 +59,7 @@
 	function logout() {
 		if (confirm('Apakah Anda yakin ingin keluar dari Panel Admin?')) {
 			isAuthenticated = false;
-			if (browser) sessionStorage.removeItem('admin-vibe-auth');
+			if (browser) sessionStorage.removeItem('admin-yadm-auth');
 		}
 	}
 
@@ -396,7 +396,7 @@
 						</div>
 						<div class="grid grid-cols-2 gap-4 sm:grid-cols-5">
 							{#each [
-								{ id: 'vibe', label: 'Vibe', color: 'from-blue-600 to-purple-600' },
+								{ id: 'vibe', label: 'Dynamic', color: 'from-blue-600 to-purple-600' },
 								{ id: 'modern', label: 'Modern', color: 'from-slate-700 to-slate-900' },
 								{ id: 'classic', label: 'Classic', color: 'from-emerald-700 to-teal-900' },
 								{ id: 'ocean', label: 'Ocean', color: 'from-cyan-600 to-blue-800' },

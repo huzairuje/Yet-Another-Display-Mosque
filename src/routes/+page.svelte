@@ -88,29 +88,32 @@
 		}
 		initSSE();
 
-		// Timer Background
-		const bgTimer = setInterval(
-			() => {
-				if (settings.value.backgrounds.length > 1)
-					bgIndex = (bgIndex + 1) % settings.value.backgrounds.length;
-			},
-			(settings.value.bgSlideshowDuration || 60) * 1000
-		);
-
-		// Timer Info Slideshow
-		const infoTimer = setInterval(
-			() => {
-				if (activeInfos.length > 1) infoIndex = (infoIndex + 1) % activeInfos.length;
-			},
-			(settings.value.infoSlideshowDuration || 15) * 1000
-		);
-
 		return () => {
 			window.removeEventListener('keydown', handleKeyDown);
 			if (eventSource) eventSource.close();
-			clearInterval(bgTimer);
-			clearInterval(infoTimer);
 		};
+	});
+
+	// Timer Background REAKTIF (Mati-Nyalain pas setting berubah)
+	$effect(() => {
+		const duration = (settings.value.bgSlideshowDuration || 60) * 1000;
+		const timer = setInterval(() => {
+			if (settings.value.backgrounds.length > 1) {
+				bgIndex = (bgIndex + 1) % settings.value.backgrounds.length;
+			}
+		}, duration);
+		return () => clearInterval(timer);
+	});
+
+	// Timer Info REAKTIF (Mati-Nyalain pas setting berubah)
+	$effect(() => {
+		const duration = (settings.value.infoSlideshowDuration || 15) * 1000;
+		const timer = setInterval(() => {
+			if (activeInfos.length > 1) {
+				infoIndex = (infoIndex + 1) % activeInfos.length;
+			}
+		}, duration);
+		return () => clearInterval(timer);
 	});
 
 	const bigInfoFontSize = $derived.by(() => {
@@ -326,14 +329,14 @@
 		<div class="flex h-[14vh] max-h-[14vh] flex-col gap-[1.5vh] overflow-hidden">
 			<!-- Quote -->
 			<div
-				class="relative flex h-full items-center gap-[4vh] overflow-hidden rounded-[2.5vh] border border-white/10 bg-white/5 px-[4vh] shadow-2xl backdrop-blur-3xl"
+				class="relative h-full overflow-hidden rounded-[2.5vh] border border-white/10 bg-white/5 shadow-2xl backdrop-blur-3xl"
 			>
 				{#if currentInfo}
 					{#key currentInfo.id}
 						<div
-							class="flex h-full w-full items-center gap-[4vh]"
-							in:fade={{ delay: 500 }}
-							out:fade
+							class="absolute inset-0 flex items-center gap-[4vh] px-[4vh]"
+							in:fade={{ duration: 400, delay: 400 }}
+							out:fade={{ duration: 400 }}
 						>
 							<div class="flex flex-col items-center gap-[0.8vh]">
 								<div class="rounded-[1.5vh] p-[1.5vh] {themeConfig.info.bg}">
@@ -359,8 +362,8 @@
 						</div>
 					{/key}
 				{:else}
-					<div class="flex w-full items-center justify-center opacity-20">
-						<span class="text-[2.5vh] font-bold tracking-[0.4em] uppercase">Masjid Vibe</span>
+					<div class="flex h-full w-full items-center justify-center opacity-20">
+						<span class="text-[2.5vh] font-bold tracking-[0.4em] uppercase">YADM</span>
 					</div>
 				{/if}
 			</div>

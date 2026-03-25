@@ -59,7 +59,7 @@ const DEFAULT_SETTINGS: Settings = {
 	iqomah: { fajr: 10, dhuhr: 10, asr: 10, maghrib: 10, isha: 10 },
 	drift: 0,
 	cash: 0,
-	runningText: 'Masjid Vibe - Selamat datang jamaah sekalian. Mari rapatkan shaf.',
+	runningText: 'YADM (Yet Another Display Mosque) - Selamat datang jamaah sekalian. Mari rapatkan shaf.',
 	bigInfo: '',
 	infos: [
 		{
@@ -115,10 +115,11 @@ class SettingsStore {
 	async save() {
 		if (!browser) return;
 		try {
+			const dataToSave = $state.snapshot(this.#value);
 			await fetch('/api/settings', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(this.#value)
+				body: JSON.stringify(dataToSave)
 			});
 		} catch (e) {
 			console.error('Gagal simpan pengaturan:', e);
