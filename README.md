@@ -24,7 +24,17 @@
 - **Icons**: [Lucide Svelte](https://lucide.dev/)
 - **Communication**: Server-Sent Events (SSE)
 
-## 🚀 Cara Instalasi
+## 🚀 Panduan Instalasi & Pengaturan
+
+Untuk pengurus masjid yang ingin memasang sistem ini di layar display, silakan baca panduan lengkapnya di:
+
+👉 **[PANDUAN INSTALASI & SETUP (MOSQUE_INSTALL.md)](MOSQUE_INSTALL.md)**
+
+## 📦 Download Rilisan Siap Pakai
+
+Jika Anda tidak ingin melakukan build dari source code, Anda bisa mengunduh paket runner yang sudah jadi untuk Linux atau Windows di halaman **[Releases](https://github.com/nyanpoketto-kujira/Yet-Another-Display-Mosque/releases)**.
+
+## 🛠️ Pengembangan (Untuk Developer)
 
 1. **Clone Repository**
    ```bash
@@ -42,14 +52,14 @@
    pnpm dev
    ```
 
-4. **Build untuk Produksi**
+4. **Build Paket Runner**
    ```bash
-   pnpm build
+   bash build.sh
    ```
 
-## 📝 Konfigurasi
+## 📝 Lisensi
 
-Semua pengaturan dilakukan melalui halaman admin di `/admin`. Password default dapat dilihat/diubah di file `data/settings.json`.
+Proyek ini berada di bawah lisensi MIT. Silakan gunakan dan modifikasi untuk kemaslahatan umat.
 
 ---
 Dibuat dengan ❤️ oleh [nyanpoketto-kujira](https://github.com/nyanpoketto-kujira)
