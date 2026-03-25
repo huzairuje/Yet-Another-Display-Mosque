@@ -42,19 +42,25 @@ Pilih salah satu cara berikut untuk memasang YADM:
 
 ---
 
-## 🖥️ Langkah 3: Setup Autorun (Boot)
+## 🖥️ Langkah 3: Setup Autorun & Mode Kiosk (Penting!)
 
-Agar display masjid otomatis menyala saat listrik hidup:
+Agar sistem benar-benar otomatis, kita ingin komputer langsung membuka browser dalam mode Fullscreen (Kiosk) saat menyala.
 
-### Di Windows (Startup Folder)
-1.  Tekan `Win + R`, ketik `shell:startup`, tekan Enter.
-2.  Klik kanan di dalam folder tersebut, pilih `New -> Shortcut`.
-3.  Cari lokasi file `start.bat` di folder YADM Anda.
-4.  Layar akan otomatis jalan saat Windows masuk ke Desktop.
+### 🪟 Di Windows (Google Chrome / Edge)
+1.  Buat shortcut baru di Desktop untuk Chrome/Edge.
+2.  Klik kanan shortcut tersebut -> **Properties**.
+3.  Di kolom **Target**, tambahkan kode berikut di paling ujung (setelah tanda kutip):
+    ` --kiosk http://localhost:3000`
+    *(Contoh: `"C:\...\chrome.exe" --kiosk http://localhost:3000`)*
+4.  Pindahkan shortcut ini ke folder Startup (`Win+R` -> `shell:startup`).
 
-### Di Linux (Systemd Service)
-1.  Buat file service baru: `sudo nano /etc/systemd/system/yadm.service`
-2.  Copy-paste teks berikut (sesuaikan PATH-nya):
+### 🐧 Di Linux (Raspberry Pi / Ubuntu)
+
+Untuk Linux, kita perlu dua hal: menjalankan program di background, dan membuka browser saat desktop menyala.
+
+**1. Jalankan Program di Background (Systemd):**
+*   Buat file service: `sudo nano /etc/systemd/system/yadm.service`
+*   Copy-paste teks berikut (sesuaikan PATH-nya):
     ```ini
     [Unit]
     Description=YADM Runner
@@ -70,12 +76,28 @@ Agar display masjid otomatis menyala saat listrik hidup:
     [Install]
     WantedBy=multi-user.target
     ```
-3.  Simpan (Ctrl+O, Enter), keluar (Ctrl+X).
-4.  Jalankan perintah:
+*   Enable: `sudo systemctl enable yadm && sudo systemctl start yadm`
+
+**2. Buka Browser saat Boot:**
+*   Edit file autostart (Raspberry Pi): `nano /home/pi/.config/lxsession/LXDE-pi/autostart`
+*   Tambahkan baris ini di paling bawah:
     ```bash
-    sudo systemctl enable yadm
-    sudo systemctl start yadm
+    @chromium-browser --kiosk --incognito http://localhost:3000
     ```
+
+---
+
+## ⌨️ Pintasan Keyboard (Cara Keluar)
+
+Saat dalam Mode Kiosk (Fullscreen), Anda tidak akan melihat tombol close atau taskbar. Gunakan pintasan berikut:
+
+| Perintah | Windows | Linux |
+| :--- | :--- | :--- |
+| **Keluar dari Fullscreen** | `F11` | `F11` |
+| **Tutup Browser (Keluar Kiosk)** | `Alt + F4` | `Alt + F4` atau `Ctrl + W` |
+| **Buka Task Manager (Jika Hang)** | `Ctrl + Shift + Esc` | `Ctrl + Alt + T` (Terminal) |
+| **Refresh Tampilan** | `Ctrl + R` | `Ctrl + R` |
+| **Masuk Panel Admin** | Ketik `/admin` di ujung URL | - |
 
 ---
 
