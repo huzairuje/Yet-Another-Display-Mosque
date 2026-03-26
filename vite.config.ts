@@ -9,5 +9,8 @@ export default defineConfig({
 			// Kasih tau Vite jangan mantau folder data/ biar gak refresh pas simpan settings
 			ignored: ['**/data/**']
 		}
+	},
+	ssr: {
+		noExternal: ['adhan', 'moment-hijri', 'lucide-svelte']
 	}
 });
