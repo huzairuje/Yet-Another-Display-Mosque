@@ -14,7 +14,7 @@
 - ⚡ **Real-time Sync (SSE)**: Perubahan di Panel Admin langsung muncul di layar tanpa *refresh*.
 - 🎨 **Tema Dinamis**: Pilihan tema (Modern, Classic, Ocean, Sunset, dll) yang menyesuaikan suasana.
 - 🖼️ **Slideshow Background**: Unggah foto kegiatan masjid atau pemandangan dengan mudah.
-- 💰 **Manajemen Kas**: Pencatatan pemasukan & pengeluaran yang transparan.
+- 💰 **Manajemen Kas (BETA)**: Pencatatan pemasukan & pengeluaran yang transparan (Dapat dicoba di build terbaru).
 - 📜 **Informasi & Teks Berjalan**: Sampaikan pengumuman atau hadits dengan gaya elegan.
 - 🕌 **Mode Jum'at**: Tampilan khusus untuk nama Khathib dan durasi khutbah.
 
