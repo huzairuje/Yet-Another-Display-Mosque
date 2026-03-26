@@ -1,5 +1,7 @@
 # 🕋 Al-Ye'AnDiMo (Alhamdulillah It's Yet Another Display Mosque)
 
+**Bahasa Indonesia** | [English](README.en.md)
+
 ![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Build](https://img.shields.io/badge/build-Svelte_5-orange.svg)
