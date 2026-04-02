@@ -8,6 +8,10 @@ export default defineConfig({
 		watch: {
 			// Kasih tau Vite jangan mantau folder data/ biar gak refresh pas simpan settings
 			ignored: ['**/data/**']
+		},
+		proxy: {
+			'/api': 'http://127.0.0.1:3000',
+			'/uploads': 'http://127.0.0.1:3000'
 		}
 	},
 	ssr: {
