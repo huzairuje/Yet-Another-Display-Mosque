@@ -16,6 +16,21 @@ export interface InfoItem {
 	active: boolean;
 }
 
+export interface MicrositeSlide {
+	id: string;
+	type: 'image' | 'microsite';
+	// For type: 'image'
+	imageUrl?: string;
+	// For type: 'microsite'
+	title?: string;
+	content?: string;
+	footer?: string;
+	backgroundImage?: string;
+	backgroundColor?: string;
+	textColor?: string;
+	layout?: 'center' | 'left' | 'right';
+}
+
 export interface Settings {
 	lat: number;
 	lng: number;
@@ -39,6 +54,7 @@ export interface Settings {
 	cash: number;
 	runningText: string;
 	bigInfo: string;
+	bigInfoColorScheme: 'green' | 'red' | 'white' | 'black';
 	infos: InfoItem[];
 	preAdzanDuration: number;
 	sholatDuration: number;
@@ -46,7 +62,8 @@ export interface Settings {
 	infoSlideshowDuration: number; // Detik
 	transactions: Transaction[];
 	adminPassword: string;
-	backgrounds: string[];
+	backgrounds: string[]; // Legacy support
+	slides: MicrositeSlide[]; // New carousel system
 	fridayKhatib: string;
 	fridayKhutbahDuration: number; // Menit
 	hideTransactionAmount: boolean;
@@ -63,6 +80,7 @@ const DEFAULT_SETTINGS: Settings = {
 	runningText:
 		'YADM (Yet Another Display Mosque) - Selamat datang jamaah sekalian. Mari rapatkan shaf.',
 	bigInfo: '',
+	bigInfoColorScheme: 'red',
 	infos: [
 		{
 			id: '1',
@@ -80,6 +98,7 @@ const DEFAULT_SETTINGS: Settings = {
 	transactions: [],
 	adminPassword: 'vibe-masjid',
 	backgrounds: [],
+	slides: [],
 	fridayKhatib: 'Ustadz Ahmad Fulan',
 	fridayKhutbahDuration: 20,
 	hideTransactionAmount: false,

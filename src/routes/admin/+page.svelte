@@ -70,7 +70,7 @@
 		window.location.href = '/';
 	}
 
-	let activeTab = $state<'umum' | 'kas' | 'jadwal' | 'teks' | 'bg' | 'about'>('umum');
+	let activeTab = $state<'umum' | 'kas' | 'jadwal' | 'teks' | 'bg' | 'microsite' | 'about'>('umum');
 
 	const tabs = [
 		{ id: 'umum', label: 'Umum', icon: SettingsIcon },
@@ -78,6 +78,7 @@
 		{ id: 'jadwal', label: 'Jadwal', icon: Clock },
 		{ id: 'teks', label: 'Info', icon: Type },
 		{ id: 'bg', label: 'BG', icon: ImageIcon },
+		{ id: 'microsite', label: 'Microsite', icon: LayoutDashboard },
 		{ id: 'about', label: 'About', icon: Cpu }
 	] as const;
 
@@ -141,20 +142,58 @@
 	}
 
 	// INFO MANAGEMENT
+	let editingInfoId = $state<string | null>(null);
 	let newInfoHeader = $state('');
 	let newInfoContent = $state('');
 	let newInfoFooter = $state('');
 
 	function addInfo() {
 		if (!newInfoContent) return;
-		const newInfo: InfoItem = {
-			id: Math.random().toString(36).substring(2, 9),
-			header: newInfoHeader || 'Informasi',
-			content: newInfoContent,
-			footer: newInfoFooter,
-			active: true
-		};
-		settings.update({ infos: [newInfo, ...settings.value.infos] });
+
+		if (editingInfoId) {
+			// Update existing info
+			const updatedInfos = settings.value.infos.map((info) =>
+				info.id === editingInfoId
+					? {
+							...info,
+							header: newInfoHeader || 'Informasi',
+							content: newInfoContent,
+							footer: newInfoFooter
+						}
+					: info
+			);
+			settings.update({ infos: updatedInfos });
+			editingInfoId = null;
+		} else {
+			// Create new info
+			const newInfo: InfoItem = {
+				id: Math.random().toString(36).substring(2, 9),
+				header: newInfoHeader || 'Informasi',
+				content: newInfoContent,
+				footer: newInfoFooter,
+				active: true
+			};
+			settings.update({ infos: [newInfo, ...settings.value.infos] });
+		}
+
+		// Reset form
+		newInfoHeader = '';
+		newInfoContent = '';
+		newInfoFooter = '';
+	}
+
+	function editInfo(id: string) {
+		const info = settings.value.infos.find((i) => i.id === id);
+		if (!info) return;
+
+		editingInfoId = id;
+		newInfoHeader = info.header;
+		newInfoContent = info.content;
+		newInfoFooter = info.footer;
+	}
+
+	function cancelEditInfo() {
+		editingInfoId = null;
 		newInfoHeader = '';
 		newInfoContent = '';
 		newInfoFooter = '';
@@ -170,6 +209,93 @@
 	function deleteInfo(id: string) {
 		if (!confirm('Hapus informasi ini?')) return;
 		settings.update({ infos: settings.value.infos.filter((i) => i.id !== id) });
+	}
+
+	// MICROSITE SLIDE MANAGEMENT
+	let editingSlideId = $state<string | null>(null);
+	let newSlideTitle = $state('');
+	let newSlideContent = $state('');
+	let newSlideFooter = $state('');
+	let newSlideBackgroundImage = $state('');
+	let newSlideBgColor = $state('#065f46');
+	let newSlideTextColor = $state('#ffffff');
+	let newSlideLayout = $state<'left' | 'center' | 'right'>('center');
+
+	function addMicrositeSlide() {
+		if (!newSlideTitle && !newSlideContent) return;
+
+		if (editingSlideId) {
+			// Update existing slide
+			const updatedSlides = settings.value.slides.map((slide) =>
+				slide.id === editingSlideId
+					? {
+							...slide,
+							title: newSlideTitle,
+							content: newSlideContent,
+							footer: newSlideFooter,
+							backgroundImage: newSlideBackgroundImage || undefined,
+							backgroundColor: newSlideBgColor,
+							textColor: newSlideTextColor,
+							layout: newSlideLayout
+						}
+					: slide
+			);
+			settings.update({ slides: updatedSlides });
+			editingSlideId = null;
+		} else {
+			// Create new slide
+			const newSlide: import('$lib/settings.svelte').MicrositeSlide = {
+				id: Math.random().toString(36).substring(2, 9),
+				type: 'microsite',
+				title: newSlideTitle,
+				content: newSlideContent,
+				footer: newSlideFooter,
+				backgroundImage: newSlideBackgroundImage || undefined,
+				backgroundColor: newSlideBgColor,
+				textColor: newSlideTextColor,
+				layout: newSlideLayout
+			};
+			settings.update({ slides: [...settings.value.slides, newSlide] });
+		}
+
+		// Reset form
+		newSlideTitle = '';
+		newSlideContent = '';
+		newSlideFooter = '';
+		newSlideBackgroundImage = '';
+		newSlideBgColor = '#065f46';
+		newSlideTextColor = '#ffffff';
+		newSlideLayout = 'center';
+	}
+
+	function editMicrositeSlide(id: string) {
+		const slide = settings.value.slides.find((s) => s.id === id);
+		if (!slide || slide.type !== 'microsite') return;
+
+		editingSlideId = id;
+		newSlideTitle = slide.title || '';
+		newSlideContent = slide.content || '';
+		newSlideFooter = slide.footer || '';
+		newSlideBackgroundImage = slide.backgroundImage || '';
+		newSlideBgColor = slide.backgroundColor || '#065f46';
+		newSlideTextColor = slide.textColor || '#ffffff';
+		newSlideLayout = slide.layout || 'center';
+	}
+
+	function cancelEditMicrositeSlide() {
+		editingSlideId = null;
+		newSlideTitle = '';
+		newSlideContent = '';
+		newSlideFooter = '';
+		newSlideBackgroundImage = '';
+		newSlideBgColor = '#065f46';
+		newSlideTextColor = '#ffffff';
+		newSlideLayout = 'center';
+	}
+
+	function deleteMicrositeSlide(id: string) {
+		if (!confirm('Hapus slide ini?')) return;
+		settings.update({ slides: settings.value.slides.filter((s) => s.id !== id) });
 	}
 
 	// Background Management
@@ -378,6 +504,192 @@
 										>
 									</div>
 								</div>{/each}
+						</div>
+					</section>
+				</div>
+			{/if}
+
+			{#if activeTab === 'microsite'}
+				<div transition:fade={{ duration: 200 }} class="space-y-6">
+					<section class="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-xl">
+						<div class="mb-6 flex items-center justify-between">
+							<div class="flex items-center gap-3">
+								<LayoutDashboard class="h-5 w-5 text-purple-400" />
+								<h2 class="text-sm font-black tracking-widest uppercase">Microsite Slides</h2>
+							</div>
+						</div>
+
+						<!-- Add New Slide Form -->
+						<div class="mb-6 rounded-2xl border border-slate-800 bg-slate-950 p-6">
+							<h3 class="mb-4 text-xs font-black tracking-widest text-slate-500 uppercase">
+								Tambah Slide Baru
+							</h3>
+							<div class="space-y-4">
+								<div>
+									<label class="mb-2 block text-[10px] font-black text-slate-500 uppercase"
+										>Judul</label
+									>
+									<input
+										bind:value={newSlideTitle}
+										class="w-full rounded-xl border border-slate-800 bg-slate-900 p-3 text-sm outline-none focus:ring-2 focus:ring-purple-500"
+										placeholder="Contoh: Kajian Rutin"
+									/>
+								</div>
+								<div>
+									<label class="mb-2 block text-[10px] font-black text-slate-500 uppercase"
+										>Konten</label
+									>
+									<textarea
+										bind:value={newSlideContent}
+										rows="3"
+										class="w-full rounded-xl border border-slate-800 bg-slate-900 p-3 text-sm outline-none focus:ring-2 focus:ring-purple-500"
+										placeholder="Contoh: Setiap Rabu, 19:30 WIB&#10;Bersama Ustadz Ahmad"
+									></textarea>
+								</div>
+								<div>
+									<label class="mb-2 block text-[10px] font-black text-slate-500 uppercase"
+										>Footer</label
+									>
+									<input
+										bind:value={newSlideFooter}
+										class="w-full rounded-xl border border-slate-800 bg-slate-900 p-3 text-sm outline-none focus:ring-2 focus:ring-purple-500"
+										placeholder="Contoh: Terbuka untuk umum"
+									/>
+								</div>
+								<div>
+									<label class="mb-2 block text-[10px] font-black text-slate-500 uppercase"
+										>Background Image (Optional)</label
+									>
+									<select
+										bind:value={newSlideBackgroundImage}
+										class="w-full rounded-xl border border-slate-800 bg-slate-900 p-3 text-sm outline-none focus:ring-2 focus:ring-purple-500"
+									>
+										<option value="">Tidak ada (gunakan warna)</option>
+										{#each settings.value.backgrounds as bg}
+											<option value={bg}>{bg.split('/').pop()}</option>
+										{/each}
+									</select>
+									<p class="mt-1 text-[9px] text-slate-600">
+										Pilih gambar dari koleksi background, atau kosongkan untuk gunakan warna solid
+									</p>
+								</div>
+								<div class="grid grid-cols-2 gap-4">
+									<div>
+										<label class="mb-2 block text-[10px] font-black text-slate-500 uppercase"
+											>Background Color</label
+										>
+										<input
+											type="color"
+											bind:value={newSlideBgColor}
+											class="h-12 w-full cursor-pointer rounded-xl border border-slate-800 bg-slate-900"
+										/>
+									</div>
+									<div>
+										<label class="mb-2 block text-[10px] font-black text-slate-500 uppercase"
+											>Text Color</label
+										>
+										<input
+											type="color"
+											bind:value={newSlideTextColor}
+											class="h-12 w-full cursor-pointer rounded-xl border border-slate-800 bg-slate-900"
+										/>
+									</div>
+								</div>
+								<div>
+									<label class="mb-2 block text-[10px] font-black text-slate-500 uppercase"
+										>Layout</label
+									>
+									<div class="grid grid-cols-3 gap-2">
+										{#each ['left', 'center', 'right'] as layout}
+											<button
+												onclick={() => (newSlideLayout = layout)}
+												class="rounded-xl border-2 p-3 text-xs font-bold transition-all {newSlideLayout ===
+												layout
+													? 'border-purple-500 bg-purple-500/10 text-purple-400'
+													: 'border-slate-800 text-slate-500 hover:border-slate-700'}"
+											>
+												{layout.toUpperCase()}
+											</button>
+										{/each}
+									</div>
+								</div>
+								<div class="flex gap-2">
+									<button
+										onclick={addMicrositeSlide}
+										class="flex-1 rounded-xl bg-purple-600 p-4 text-sm font-bold text-white transition-colors hover:bg-purple-500"
+									>
+										<Plus class="mr-2 inline h-4 w-4" />
+										{editingSlideId ? 'Update Slide' : 'Tambah Slide'}
+									</button>
+									{#if editingSlideId}
+										<button
+											onclick={cancelEditMicrositeSlide}
+											class="rounded-xl border-2 border-slate-700 bg-slate-800 px-6 py-4 text-sm font-bold text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-300"
+										>
+											<X class="inline h-4 w-4" />
+										</button>
+									{/if}
+								</div>
+							</div>
+						</div>
+
+						<!-- Existing Slides -->
+						<div class="space-y-4">
+							{#each settings.value.slides as slide (slide.id)}
+								<div class="rounded-2xl border border-slate-800 bg-slate-950 p-4" transition:slide>
+									<div class="flex items-start justify-between gap-4">
+										<div class="flex-1">
+											<h4 class="mb-2 text-sm font-bold text-white">
+												{slide.title || 'Untitled'}
+											</h4>
+											<p class="mb-2 whitespace-pre-line text-xs text-slate-400">
+												{slide.content}
+											</p>
+											{#if slide.footer}
+												<p class="text-[10px] text-slate-600">{slide.footer}</p>
+											{/if}
+											<div class="mt-3 flex gap-2">
+												<span
+													class="rounded-lg bg-slate-800 px-2 py-1 text-[9px] font-bold text-slate-400"
+												>
+													{slide.layout || 'center'}
+												</span>
+												{#if slide.backgroundColor}
+													<span
+														class="rounded-lg px-2 py-1 text-[9px] font-bold"
+														style="background-color: {slide.backgroundColor}; color: {slide.textColor ||
+															'#fff'}"
+													>
+														Color
+													</span>
+												{/if}
+											</div>
+										</div>
+									</div>
+										<div class="flex gap-2">
+											<button
+												onclick={() => editMicrositeSlide(slide.id)}
+												class="rounded-lg bg-blue-600 p-2 text-white transition-colors hover:bg-blue-500"
+											>
+												<MessageSquarePlus class="h-4 w-4" />
+											</button>
+											<button
+												onclick={() => deleteMicrositeSlide(slide.id)}
+												class="rounded-lg bg-rose-600 p-2 text-white transition-colors hover:bg-rose-500"
+											>
+												<Trash2 class="h-4 w-4" />
+											</button>
+										</div>
+								</div>
+							{/each}
+							{#if settings.value.slides.length === 0}
+								<div
+									class="rounded-2xl border border-dashed border-slate-800 bg-slate-950/50 p-8 text-center"
+								>
+									<LayoutDashboard class="mx-auto mb-3 h-8 w-8 text-slate-700" />
+									<p class="text-sm text-slate-600">Belum ada microsite slide</p>
+								</div>
+							{/if}
 						</div>
 					</section>
 				</div>
@@ -627,11 +939,21 @@
 								placeholder="Isi pesan..."
 								class="h-24 w-full rounded-xl border border-slate-800 bg-slate-900 p-4 text-sm outline-none"
 							></textarea>
-							<button
-								onclick={addInfo}
-								class="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 p-4 text-xs font-black text-white uppercase transition-all hover:bg-blue-500"
-								><Plus class="h-4 w-4" /> TAMBAH INFO</button
-							>
+							<div class="flex gap-2">
+								<button
+									onclick={addInfo}
+									class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 p-4 text-xs font-black text-white uppercase transition-all hover:bg-blue-500"
+									><Plus class="h-4 w-4" /> {editingInfoId ? 'UPDATE INFO' : 'TAMBAH INFO'}</button
+								>
+								{#if editingInfoId}
+									<button
+										onclick={cancelEditInfo}
+										class="rounded-xl border-2 border-slate-700 bg-slate-800 px-6 py-4 text-sm font-bold text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-300"
+									>
+										<X class="h-4 w-4" />
+									</button>
+								{/if}
+							</div>
 						</div>
 						<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
 							{#each settings.value.infos as info (info.id)}
@@ -645,6 +967,13 @@
 											>{info.header}</span
 										>
 										<div class="flex items-center gap-2">
+											<button
+												onclick={() => editInfo(info.id)}
+												class="p-2 text-blue-400 transition-colors hover:text-blue-300"
+												title="Edit"
+											>
+												<MessageSquarePlus class="h-5 w-5" />
+											</button>
 											<button
 												onclick={() => toggleInfo(info.id)}
 												class="p-2 {info.active ? 'text-emerald-400' : 'text-slate-600'}"
@@ -674,11 +1003,33 @@
 							<AlertCircle class="h-5 w-5 text-rose-400" />
 							<h2 class="text-sm font-black tracking-widest uppercase">Pesan Darurat</h2>
 						</div>
-						<input
-							bind:value={settings.value.bigInfo}
-							class="w-full rounded-2xl border border-slate-800 bg-slate-950 p-4 text-sm outline-none focus:ring-2 focus:ring-rose-500"
-							placeholder="Biarkan kosong jika tidak ada pesan darurat"
-						/>
+						<div class="mb-4 flex gap-2">
+							<input
+								bind:value={settings.value.bigInfo}
+								class="flex-1 rounded-2xl border border-slate-800 bg-slate-950 p-4 text-sm outline-none focus:ring-2 focus:ring-rose-500"
+								placeholder="Biarkan kosong jika tidak ada pesan darurat"
+							/>
+							<button
+								onclick={() => settings.update({ bigInfo: '' })}
+								class="rounded-2xl border-2 border-slate-700 bg-slate-800 px-6 py-4 text-sm font-bold text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-300"
+								title="Clear"
+							>
+								<X class="h-4 w-4" />
+							</button>
+						</div>
+						<div class="grid grid-cols-4 gap-2">
+							{#each [{ id: 'green', label: 'Hijau', bg: 'bg-emerald-600', border: 'border-emerald-500' }, { id: 'red', label: 'Merah', bg: 'bg-rose-600', border: 'border-rose-500' }, { id: 'white', label: 'Putih', bg: 'bg-white', border: 'border-white', text: 'text-black' }, { id: 'black', label: 'Hitam', bg: 'bg-black', border: 'border-white' }] as scheme}
+								<button
+									onclick={() => settings.update({ bigInfoColorScheme: scheme.id as any })}
+									class="rounded-xl border-2 p-3 text-xs font-bold transition-all {settings.value
+										.bigInfoColorScheme === scheme.id
+										? `${scheme.border} ${scheme.bg} ${scheme.text || 'text-white'}`
+										: 'border-slate-800 bg-slate-950 text-slate-500 hover:border-slate-700'}"
+								>
+									{scheme.label}
+								</button>
+							{/each}
+						</div>
 					</section>
 				</div>
 			{/if}

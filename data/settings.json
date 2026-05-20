@@ -1,67 +1,81 @@
 {
-  "lat": -6.2,
-  "lng": 106.8,
-  "offsets": {
-    "fajr": 0,
-    "sunrise": 0,
-    "dhuhr": 1,
-    "asr": 0,
-    "maghrib": 0,
-    "isha": 0
-  },
-  "iqomah": {
-    "fajr": 10,
-    "dhuhr": 10,
-    "asr": 10,
-    "maghrib": 10,
-    "isha": 10
-  },
-  "drift": 0,
-  "cash": 410000,
-  "runningText": "YADM (Yet Another Display Mosque) - Selamat datang jamaah sekalian. Mari rapatkan shaf.",
-  "bigInfo": "",
-  "infos": [
-    {
-      "id": "1",
-      "header": "Hadits Hari Ini",
-      "content": "Barangsiapa yang menempuh jalan untuk mencari ilmu, maka Allah akan memudahkan baginya jalan menuju surga.",
-      "footer": "HR. Muslim",
-      "active": true
-    }
-  ],
-  "preAdzanDuration": 10,
-  "sholatDuration": 15,
-  "bgSlideshowDuration": 1,
-  "infoSlideshowDuration": 15,
-  "transactions": [
-    {
-      "id": "4z143eamippmn6o1rjj",
-      "date": "26 Mar 2026",
-      "desc": "Pembelian peralatan",
-      "amount": 340000,
-      "type": "out"
-    },
-    {
-      "id": "hwfyh8nbdp8mn6o107j",
-      "date": "26 Mar 2026",
-      "desc": "Kamis barokah ",
-      "amount": 250000,
-      "type": "in"
-    },
-    {
-      "id": "cqqyzto4pe6mn6o0319",
-      "date": "26 Mar 2026",
-      "desc": "Uang infaq",
-      "amount": 500000,
-      "type": "in"
-    }
-  ],
   "adminPassword": "vibe-masjid",
   "backgrounds": [
-    "/uploads/1774480353845-374749208.jpg"
+    "/uploads/1779280884021-21450048.jpg"
   ],
+  "bgSlideshowDuration": 15,
+  "bigInfo": "",
+  "bigInfoColorScheme": "black",
+  "cash": 410000,
+  "drift": 0,
   "fridayKhatib": "Ustadz Ahmad Fulan",
   "fridayKhutbahDuration": 20,
   "hideTransactionAmount": false,
-  "theme": "classic"
+  "infoSlideshowDuration": 15,
+  "infos": [
+    {
+      "active": true,
+      "content": "Barangsiapa yang menempuh jalan untuk mencari ilmu, maka Allah akan memudahkan baginya jalan menuju surga.",
+      "footer": "HR. Muslim",
+      "header": "Hadits Hari Ini",
+      "id": "1"
+    }
+  ],
+  "iqomah": {
+    "asr": 10,
+    "dhuhr": 10,
+    "fajr": 10,
+    "isha": 10,
+    "maghrib": 10
+  },
+  "lat": -6.2,
+  "lng": 106.8,
+  "offsets": {
+    "asr": 0,
+    "dhuhr": 1,
+    "fajr": 0,
+    "isha": 0,
+    "maghrib": 0,
+    "sunrise": 0
+  },
+  "preAdzanDuration": 10,
+  "runningText": "YADM (Yet Another Display Mosque) - Selamat datang jamaah sekalian. Mari rapatkan shaf.",
+  "sholatDuration": 15,
+  "slides": [
+    {
+      "backgroundColor": "#065f46",
+      "backgroundImage": "/uploads/1779280884021-21450048.jpg",
+      "content": "Bersama Ustad Ahmad",
+      "footer": "Terbuka Untuk Umum",
+      "id": "aipq4m6",
+      "layout": "center",
+      "textColor": "#ffffff",
+      "title": "Kajian Rutin",
+      "type": "microsite"
+    }
+  ],
+  "theme": "classic",
+  "transactions": [
+    {
+      "amount": 340000,
+      "date": "26 Mar 2026",
+      "desc": "Pembelian peralatan",
+      "id": "4z143eamippmn6o1rjj",
+      "type": "out"
+    },
+    {
+      "amount": 250000,
+      "date": "26 Mar 2026",
+      "desc": "Kamis barokah ",
+      "id": "hwfyh8nbdp8mn6o107j",
+      "type": "in"
+    },
+    {
+      "amount": 500000,
+      "date": "26 Mar 2026",
+      "desc": "Uang infaq",
+      "id": "cqqyzto4pe6mn6o0319",
+      "type": "in"
+    }
+  ]
 }

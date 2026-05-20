@@ -20,7 +20,7 @@
 		Quote,
 		Mic2
 	} from 'lucide-svelte';
-	import { fade, slide } from 'svelte/transition';
+	import { fade, slide, fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
 	// Jam pake titik biar sama kayak screenshot
@@ -51,10 +51,25 @@
 		settings.value.transactions.filter((t) => t.type === 'out').slice(0, 2)
 	);
 
-	// BACKGROUND SLIDESHOW
+	// BACKGROUND SLIDESHOW - Support both legacy backgrounds and new slides
 	let bgIndex = $state(0);
-	const currentBg = $derived(
-		settings.value.backgrounds.length > 0 ? settings.value.backgrounds[bgIndex] : null
+
+	// Migrate legacy backgrounds to slides format
+	const allSlides = $derived.by(() => {
+		const slides = [...settings.value.slides];
+		// Add legacy backgrounds as image slides
+		settings.value.backgrounds.forEach((bg, idx) => {
+			slides.push({
+				id: `legacy-${idx}`,
+				type: 'image',
+				imageUrl: bg
+			});
+		});
+		return slides;
+	});
+
+	const currentSlide = $derived(
+		allSlides.length > 0 ? allSlides[bgIndex] : null
 	);
 
 	// INFO SLIDESHOW (MOTD/HADITS)
@@ -97,8 +112,8 @@
 	$effect(() => {
 		const duration = (settings.value.bgSlideshowDuration || 60) * 1000;
 		const timer = setInterval(() => {
-			if (settings.value.backgrounds.length > 1) {
-				bgIndex = (bgIndex + 1) % settings.value.backgrounds.length;
+			if (allSlides.length > 1) {
+				bgIndex = (bgIndex + 1) % allSlides.length;
 			}
 		}, duration);
 		return () => clearInterval(timer);
@@ -121,6 +136,21 @@
 		if (len < 50) return 'text-[7rem]';
 		if (len < 100) return 'text-[5rem]';
 		return 'text-[3.5rem]';
+	});
+
+	const bigInfoColorScheme = $derived.by(() => {
+		switch (settings.value.bigInfoColorScheme) {
+			case 'green':
+				return { text: 'text-emerald-500', bg: 'bg-black/85' };
+			case 'red':
+				return { text: 'text-rose-500', bg: 'bg-black/85' };
+			case 'white':
+				return { text: 'text-white', bg: 'bg-black/85' };
+			case 'black':
+				return { text: 'text-black', bg: 'bg-white/85' };
+			default:
+				return { text: 'text-rose-500', bg: 'bg-black/85' };
+		}
 	});
 
 	const themeConfig = $derived.by(() => {
@@ -194,7 +224,7 @@
 
 	<!-- Main Bento Dashboard (The 4-Row Grid) -->
 	<div
-		class="relative z-10 grid h-full w-full grid-rows-[1fr_14vh_18vh_auto] gap-[2vh] overflow-hidden"
+		class="relative z-10 grid h-full w-full grid-rows-[1.8fr_10vh_18vh_auto] gap-[2vh] overflow-hidden"
 	>
 		<!-- ROW 1: HEADER (Slideshow & Stats) -->
 		<div class="grid h-full min-h-0 grid-cols-12 gap-[2vh] overflow-hidden">
@@ -202,14 +232,61 @@
 			<div
 				class="relative col-span-8 h-full overflow-hidden rounded-[2.5vh] border border-white/10 bg-white/5 shadow-2xl backdrop-blur-3xl"
 			>
-				{#if currentBg}
-					{#key currentBg}
-						<img
-							src={currentBg}
-							alt=""
-							class="absolute inset-0 h-full w-full object-cover transition-all duration-[2000ms]"
-							transition:fade={{ duration: 2000 }}
-						/>
+				{#if currentSlide}
+					{#key currentSlide.id}
+						{#if currentSlide.type === 'image'}
+							<!-- Regular Image Slide -->
+							<img
+								src={currentSlide.imageUrl}
+								alt=""
+								class="absolute inset-0 h-full w-full object-cover"
+								transition:fade={{ duration: 1000 }}
+							/>
+						{:else if currentSlide.type === 'microsite'}
+							<!-- Microsite Slide -->
+							<div
+								class="absolute inset-0"
+								transition:fade={{ duration: 1000 }}
+							>
+								<!-- Background Layer -->
+								{#if currentSlide.backgroundImage}
+									<img
+										src={currentSlide.backgroundImage}
+										alt=""
+										class="absolute inset-0 h-full w-full object-cover opacity-40"
+									/>
+								{:else if currentSlide.backgroundColor}
+									<div
+										class="absolute inset-0"
+										style="background-color: {currentSlide.backgroundColor}"
+									></div>
+								{/if}
+
+								<!-- Content Overlay -->
+								<div
+									class="absolute inset-0 flex items-center p-[6vh] {currentSlide.layout === 'left' ? 'justify-start' : currentSlide.layout === 'right' ? 'justify-end' : 'justify-center'}"
+									style="color: {currentSlide.textColor || '#ffffff'}"
+								>
+									<div class="max-w-[80%] {currentSlide.layout === 'left' ? 'text-left' : currentSlide.layout === 'right' ? 'text-right' : 'text-center'}">
+										{#if currentSlide.title}
+											<h2 class="text-[clamp(3rem,8vh,10rem)] leading-tight font-black tracking-tight mb-[2vh] drop-shadow-2xl">
+												{currentSlide.title}
+											</h2>
+										{/if}
+										{#if currentSlide.content}
+											<p class="text-[clamp(1.5rem,4vh,5rem)] leading-relaxed font-bold whitespace-pre-line mb-[2vh] drop-shadow-xl">
+												{currentSlide.content}
+											</p>
+										{/if}
+										{#if currentSlide.footer}
+											<p class="text-[clamp(1rem,2.5vh,3rem)] font-bold opacity-80 drop-shadow-lg">
+												{currentSlide.footer}
+											</p>
+										{/if}
+									</div>
+								</div>
+							</div>
+						{/if}
 					{/key}
 				{:else}
 					<div class="flex h-full w-full items-center justify-center opacity-20">
@@ -254,7 +331,7 @@
 			<div class="col-span-4 flex h-full flex-col gap-[2vh] overflow-hidden">
 				<!-- Clock -->
 				<div
-					class="relative flex flex-[1.8] flex-col items-center justify-center overflow-hidden rounded-[2.5vh] border border-white/10 bg-white/5 p-[2vh] shadow-xl backdrop-blur-3xl"
+					class="relative flex flex-[1.8] flex-col items-center justify-center overflow-hidden rounded-[2.5vh] border border-white/10 bg-white/5 p-[1.5vh] shadow-xl backdrop-blur-3xl"
 				>
 					<h2
 						class="mb-[0.5vh] text-center text-[1.8vh] leading-tight font-light text-white/80 italic"
@@ -266,18 +343,18 @@
 					</h3>
 					<div class="mt-[1vh] flex flex-col items-center text-center">
 						<div
-							class="text-[clamp(5rem,10vh,12rem)] leading-none font-black tracking-tight tabular-nums {themeConfig.clock} drop-shadow-lg"
+							class="text-[clamp(6rem,13vh,15rem)] leading-none font-black tracking-tight tabular-nums {themeConfig.clock} drop-shadow-lg"
 						>
 							{formatTime(prayerService.currentTime).split('.').slice(0, 2).join(':')}
-							<span class="text-[clamp(1.5rem,4vh,4rem)] opacity-50"
+							<span class="text-[clamp(1.5rem,4.5vh,5rem)] opacity-50"
 								>.{formatTime(prayerService.currentTime).split('.')[2]}</span
 							>
 						</div>
 						<div
 							class="mt-[1.5vh] flex items-center gap-[1.2vh] rounded-full border px-[2.5vh] py-[0.8vh] shadow-xl backdrop-blur-xl {themeConfig.pill}"
 						>
-							<BellRing class="h-[2vh] w-[2vh] animate-pulse text-white" />
-							<span class="text-[1.6vh] font-bold tracking-wide whitespace-nowrap text-white">
+							<BellRing class="h-[2.2vh] w-[2.2vh] animate-pulse text-white" />
+							<span class="text-[2.2vh] font-bold tracking-wide whitespace-nowrap text-white">
 								{nextPrayer.name}: {nextPrayer.time
 									.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
 									.replace(':', '.')}
@@ -339,7 +416,7 @@
 		</div>
 
 		<!-- ROW 2: MIDDLE (Quote & Khathib) -->
-		<div class="flex h-[14vh] max-h-[14vh] flex-col gap-[1.5vh] overflow-hidden">
+		<div class="flex h-[10vh] max-h-[10vh] flex-col gap-[1.5vh] overflow-hidden">
 			<!-- Quote -->
 			<div
 				class="relative h-full overflow-hidden rounded-[2.5vh] border border-white/10 bg-white/5 shadow-2xl backdrop-blur-3xl"
@@ -362,12 +439,12 @@
 							</div>
 							<div class="flex min-w-0 flex-1 flex-col justify-center">
 								<p
-									class="line-clamp-2 text-[clamp(1.2rem,3vh,3.5rem)] leading-tight font-bold tracking-wide text-white/90 italic"
+									class="line-clamp-2 text-[clamp(0.9rem,2vh,2.5rem)] leading-tight font-bold tracking-wide text-white/90 italic"
 								>
 									"{currentInfo.content}"
 								</p>
 								<p
-									class="mt-[0.5vh] text-[1.2vh] font-black tracking-widest text-slate-500 uppercase"
+									class="mt-[0.3vh] text-[1vh] font-black tracking-widest text-slate-500 uppercase"
 								>
 									— {currentInfo.footer || 'Informasi'}
 								</p>
@@ -445,12 +522,12 @@
 			class="fixed inset-0 z-[200] flex items-center justify-center p-12 md:p-24"
 			transition:fade
 		>
-			<div class="absolute inset-0 bg-black/85 backdrop-blur-3xl"></div>
+			<div class="absolute inset-0 {bigInfoColorScheme.bg} backdrop-blur-3xl"></div>
 			<div
 				class="relative flex min-h-[50vh] w-full max-w-7xl items-center justify-center rounded-[4rem] border border-white/10 bg-white/5 p-16 shadow-2xl backdrop-blur-[80px] md:p-24"
 			>
 				<p
-					class="{bigInfoFontSize} overflow-hidden text-center leading-[1.1] font-black break-words whitespace-pre-wrap text-white"
+					class="{bigInfoFontSize} overflow-hidden text-center leading-[1.1] font-black break-words whitespace-pre-wrap {bigInfoColorScheme.text}"
 				>
 					{settings.value.bigInfo}
 				</p>
